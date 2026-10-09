@@ -1,0 +1,90 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String           @id @default(uuid())
+  email         String           @unique
+  passwordHash  String
+  createdAt     DateTime         @default(now())
+  devices       Device[]
+  connections   JiraConnection[]
+  notifications Notification[]
+  tasks         Task[]
+}
+
+model Device {
+  id         String    @id @default(uuid())
+  userId     String
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  deviceId   String    @unique
+  name       String?
+  platform   String?
+  tokenHash  String    @unique
+  lastSeenAt DateTime?
+  createdAt  DateTime  @default(now())
+
+  @@index([userId])
+}
+
+model JiraConnection {
+  id            String         @id @default(uuid())
+  userId        String
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  siteUrl       String
+  email         String
+  webhookSecret String         @unique
+  createdAt     DateTime       @default(now())
+  events        WebhookEvent[]
+
+  @@index([userId])
+}
+
+model WebhookEvent {
+  id           String          @id @default(uuid())
+  connectionId String?
+  connection   JiraConnection? @relation(fields: [connectionId], references: [id], onDelete: SetNull)
+  eventType    String
+  payload      Json
+  receivedAt   DateTime        @default(now())
+  processedAt  DateTime?
+
+  @@index([connectionId])
+}
+
+model Notification {
+  id        String    @id @default(uuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      String
+  title     String
+  body      String?
+  taskId    String?
+  payload   Json?
+  readAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([userId, createdAt])
+}
+
+model Task {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  jiraKey   String
+  title     String
+  status    String
+  prNumber  Int?
+  prUrl     String?
+  branch    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+
+  @@unique([userId, jiraKey])
+  @@index([userId])
+}
