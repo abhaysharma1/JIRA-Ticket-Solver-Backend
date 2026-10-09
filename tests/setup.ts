@@ -1,3 +1,3 @@
 process.env.DATABASE_URL =
   process.env.TEST_DATABASE_URL ??
-  "postgresql://postgres:postgres@localhost:5432/jira_agent_test?schema=public";
+  "postgresql://postgres:postgres@localhost:5432/ticketbridge_test?schema=public";

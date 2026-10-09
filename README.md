@@ -1,4 +1,4 @@
-# JIRA Agent - Cloud backend
+# TicketBridge - Cloud backend
 
 Express + Prisma + PostgreSQL service that receives JIRA webhooks, holds
 accounts/devices, mirrors tasks, and routes notifications. It never runs
@@ -10,11 +10,11 @@ See `../docs/phase-19-cloud-backend.md` for the full phase record.
 
 ```powershell
 # 1. PostgreSQL (18) - development container
-docker run -d --name jira-agent-pg `
+docker run -d --name ticketbridge-pg `
   -e POSTGRES_PASSWORD=postgres -e POSTGRES_USER=postgres `
-  -p 5432:5432 -v jira-agent-pgdata:/var/lib/postgresql postgres:18
-docker exec jira-agent-pg psql -U postgres -c "CREATE DATABASE jira_agent;"
-docker exec jira-agent-pg psql -U postgres -c "CREATE DATABASE jira_agent_test;"
+  -p 5432:5432 -v ticketbridge-pgdata:/var/lib/postgresql postgres:18
+docker exec ticketbridge-pg psql -U postgres -c "CREATE DATABASE ticketbridge;"
+docker exec ticketbridge-pg psql -U postgres -c "CREATE DATABASE ticketbridge_test;"
 
 # 2. Dependencies and schema
 npm install
